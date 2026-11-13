@@ -5,15 +5,17 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
-    const search = searchParams.get('search'); // 1. Catch the search query
+    const search = searchParams.get('search');
     
     let query = supabase.from('listings').select('*').order('created_at', { ascending: false });
     
     if (category) {
-      query = query.eq('category', category);
+      // 1. Convert "property-rentals" to "property rentals"
+      const formattedCategory = category.replace(/-/g, ' ');
+      // 2. Use .ilike() for a case-insensitive match against the database
+      query = query.ilike('category', formattedCategory);
     }
 
-    // 2. Perform a case-insensitive search on the title
     if (search) {
       query = query.ilike('title', `%${search}%`); 
     }
