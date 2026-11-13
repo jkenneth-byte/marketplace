@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,13 +17,26 @@ export default function CreateItemPage() {
   const [formData, setFormData] = useState({
     title: "",
     price: "",
-    category: "Vehicles", // Added default category state
+    category: "Vehicles", 
     location: "",
     email: "",
     description: "",
   });
 
-  // Updated to support HTMLSelectElement for the category dropdown
+  // Wipes the form clean every time the page is opened
+  useEffect(() => {
+    setFormData({
+      title: "",
+      price: "",
+      category: "Vehicles",
+      location: "",
+      email: "",
+      description: "",
+    });
+    setImageFile(null);
+    setPreviewUrl(null);
+  }, []);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -84,7 +97,7 @@ export default function CreateItemPage() {
           price: parseFloat(formData.price),
           seller_email: formData.email,
           description: formData.description,
-          category: formData.category, // Now using the dynamic category from the dropdown
+          category: formData.category,
           location: formData.location,
           image_url: imageUrl,
         }),
@@ -139,7 +152,6 @@ export default function CreateItemPage() {
           required
         />
 
-        {/* Added min="0" to prevent negative prices */}
         <Input
           name="price"
           type="number"
@@ -151,7 +163,6 @@ export default function CreateItemPage() {
           required
         />
 
-        {/* New Category Dropdown */}
         <select
           name="category"
           value={formData.category}
